@@ -1,46 +1,23 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Küche – Bestellungen</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Küchenansicht</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <h1>Küchenansicht</h1>
-  <input type="password" id="pin" placeholder="PIN eingeben">
-  <button onclick="checkPin()">Login</button>
-  <div id="orders" style="display:none; margin-top:20px;"></div>
-<script>
-let visible = false;
-function checkPin() {
-  if (document.getElementById("pin").value === "8857") {
-    document.getElementById("orders").style.display = "block";
-    visible = true;
-    loadOrders();
-  } else {
-    alert("Falsche PIN");
-  }
-}
-async function loadOrders() {
-  const res = await fetch("/api/orders");
-  const orders = await res.json();
-  const list = orders.map((o, i) => {
-    const statusBtns = ["Erfasst", "In Bearbeitung", "Bezahlen", "Abholbereit", "Abgerechnet"].map(s =>
-      `<button onclick="updateStatus(${i}, '${s}')">${s}</button>`).join(" ");
-    const statusClass = o.status === "Abgerechnet" ? "style='color:green'" : "";
-    return `<div ${statusClass}><strong>Tisch ${o.table}</strong><br>${o.order.join("<br>")}<br>Status: <b>${o.status}</b><br>${statusBtns}</div><hr>`;
-  }).join("");
-  document.getElementById("orders").innerHTML = list;
-}
-async function updateStatus(index, status) {
-  await fetch("/api/status", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ index, status })
-  });
-  loadOrders();
-}
-setInterval(() => { if (visible) loadOrders(); }, 4000);
-</script>
+
+  <div id="admin-login">
+    <input type="password" id="admin-pin" placeholder="PIN eingeben" />
+    <button id="admin-login-button">Login</button>
+  </div>
+
+  <div id="admin-content" style="display: none;">
+    <h2>Bestellungen</h2>
+    <div id="orders"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
