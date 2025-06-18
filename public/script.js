@@ -1,59 +1,43 @@
-const items = [
-  { name: "Gemischter Salat", price: 8 },
-  { name: "Schnitzel mit Pommes", price: 19 },
-  { name: "Bratwurst mit Pommes", price: 14 },
-  { name: "Vanilleglace", price: 9 },
-  { name: "Schokopudding", price: 9 },
-  { name: "Mineralwasser", price: 3 },
-  { name: "Apfelschorle", price: 5 },
-  { name: "Rivella", price: 5 },
-  { name: "Bier", price: 7 },
-  { name: "Kaffee", price: 5 },
-  { name: "Kleines Bier", price: 4 }
-];
+const adminPIN = "8857";
+let lastOrderCount = 0;
 
-const menuDiv = document.getElementById("menuItems");
-const totalEl = document.getElementById("total");
+document.addEventListener("DOMContentLoaded", function () {
+  const loginBtn = document.getElementById("admin-login-button");
+  if (loginBtn) {
+    loginBtn.addEventListener("click", function () {
+      const enteredPin = document.getElementById("admin-pin").value;
+      if (enteredPin === adminPIN) {
+        document.getElementById("admin-login").style.display = "none";
+        document.getElementById("admin-content").style.display = "block";
+      } else {
+        alert("Falscher PIN");
+      }
+    });
+  }
 
-items.forEach((item, i) => {
-  const label = document.createElement("label");
-  label.innerHTML = `${item.name} – CHF ${item.price}.– 
-    <select name="item${i}" data-price="${item.price}">
-      ${[...Array(11).keys()].map(n => `<option value="${n}">${n}</option>`).join("")}
-    </select>`;
-  menuDiv.appendChild(label);
+  setInterval(loadOrders, 5000);
 });
 
-document.querySelectorAll("select").forEach(sel => {
-  sel.addEventListener("change", updateTotal);
-});
+async function loadOrders() {
+  const res = await fetch("/api/orders");
+  const orders = await res.json();
 
-function updateTotal() {
-  let sum = 0;
-  document.querySelectorAll("select").forEach(sel => {
-    const qty = parseInt(sel.value);
-    const price = parseFloat(sel.dataset.price);
-    sum += qty * price;
-  });
-  totalEl.textContent = sum;
+  if (orders.length > lastOrderCount) {
+    playDingDong();
+  }
+  lastOrderCount = orders.length;
+
+  const list = orders.map((o, i) => {
+    return `<div><strong>Tisch ${o.table}</strong><br>${o.order.join("<br>")}
+    <br>Status: <b>${o.status}</b></div><hr>`;
+  }).join("");
+  document.getElementById("orders").innerHTML = list;
 }
 
-document.getElementById("orderForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  const data = new FormData(e.target);
-  const table = data.get("table");
-  const order = [];
-  items.forEach((item, i) => {
-    const qty = parseInt(data.get("item" + i));
-    if (qty > 0) order.push(`${qty}× ${item.name} (CHF ${item.price})`);
-  });
-  const res = await fetch("/api/order", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ table, order })
-  });
-  const text = await res.text();
-  document.getElementById("statusMessage").innerHTML = "<strong>Bestellung erfasst!</strong>";
-  e.target.reset();
-  updateTotal();
-});
+function playDingDong() {
+  const audio = new Audio("sounds/dingdong.mp3");
+  audio.play();
+  if ("vibrate" in navigator) {
+    navigator.vibrate([200, 100, 200]);
+  }
+}
