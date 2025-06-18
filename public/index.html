@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Bäsebeiz Bestellung</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Bestellung</h1>
+  <form id="orderForm">
+    <label>Tischnummer: <input type="number" name="table" required></label><br><br>
+    <div id="menuItems"></div>
+    <p><strong>Gesamtsumme: CHF <span id="total">0</span>.–</strong></p>
+    <button type="submit">Bestellen</button>
+  </form>
+  <div id="statusMessage" style="margin-top:20px;"></div>
+  <script src="script.js"></script>
+</body>
+</html>

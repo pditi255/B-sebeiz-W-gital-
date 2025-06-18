@@ -1,0 +1,7 @@
+body { font-family: sans-serif; padding: 20px; }
+select { width: 60px; margin-left: 10px; }
+button { padding: 10px 20px; font-size: 16px; }
+label { display: block; margin-bottom: 10px; }
+.status-bar { margin-top: 10px; font-size: 14px; padding: 4px; }
+.status-bar span { padding: 4px 10px; margin-right: 5px; border-radius: 5px; background: #ccc; }
+.status-active { background: green; color: white !important; }
