@@ -1,0 +1,12 @@
+{
+  "name": "baesebeiz-bestellung",
+  "version": "1.0.0",
+  "description": "Bestellsystem mit Live-Status",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
