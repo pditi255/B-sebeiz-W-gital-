@@ -1,4 +1,3 @@
-
 const express = require("express");
 const path = require("path");
 const app = express();
@@ -9,14 +8,14 @@ let orders = [];
 app.use(express.static("public"));
 app.use(express.json());
 
-// Bestellung aufgeben
+// Neue Bestellung
 app.post("/api/order", (req, res) => {
   const order = req.body;
   orders.push({ ...order, status: "Bestellung erfasst" });
   res.status(200).json({ success: true });
 });
 
-// Bestellungen abrufen
+// Alle Bestellungen abrufen
 app.get("/api/orders", (req, res) => {
   res.json(orders);
 });
