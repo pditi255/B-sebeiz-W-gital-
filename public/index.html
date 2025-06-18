@@ -1,19 +1,61 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Bäsebeiz Bestellung</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Bestellung – Bäsebeiz</title>
 </head>
 <body>
-  <h1>Bestellung</h1>
-  <form id="orderForm">
-    <label>Tischnummer: <input type="number" name="table" required></label><br><br>
-    <div id="menuItems"></div>
-    <p><strong>Gesamtsumme: CHF <span id="total">0</span>.–</strong></p>
+  <h1>Menü bestellen</h1>
+  <form id="order-form">
+    <label>Tischnummer:
+      <input type="number" id="table" required>
+    </label><br><br>
+
+    <label>
+      <input type="checkbox" name="order" value="Gemischter Salat"> Gemischter Salat
+    </label><br>
+    <label>
+      <input type="checkbox" name="order" value="Schnitzel mit Pommes"> Schnitzel mit Pommes
+    </label><br>
+    <label>
+      <input type="checkbox" name="order" value="Bratwurst mit Pommes"> Bratwurst mit Pommes
+    </label><br>
+    <label>
+      <input type="checkbox" name="order" value="Vanilleglace"> Vanilleglace
+    </label><br>
+    <label>
+      <input type="checkbox" name="order" value="Schokopudding"> Schokopudding
+    </label><br><br>
+
     <button type="submit">Bestellen</button>
   </form>
-  <div id="statusMessage" style="margin-top:20px;"></div>
-  <script src="script.js"></script>
+
+  <div id="confirmation"></div>
+
+  <script>
+    document.getElementById("order-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const table = document.getElementById("table").value;
+      const selected = [...document.querySelectorAll("input[name='order']:checked")].map(i => i.value);
+
+      if (selected.length === 0) {
+        alert("Bitte mindestens ein Gericht auswählen.");
+        return;
+      }
+
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table, order: selected })
+      });
+
+      if (res.ok) {
+        document.getElementById("confirmation").innerText = "✅ Bestellung erfolgreich erfasst!";
+        document.getElementById("order-form").reset();
+      } else {
+        alert("Fehler beim Absenden.");
+      }
+    });
+  </script>
 </body>
 </html>
